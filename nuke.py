@@ -116,6 +116,7 @@ async def help(ctx):
   embed.add_field(name=".dtickers", value=".dtickers deletes every stickers", inline=False)
   embed.add_field(name=".demoji", value=".demoji deletes every emoji", inline=False)
   embed.add_field(name=".croles", value=".croles(name) create roles and name them as 'name'", inline=False)
+  embed.add_field(name=".dm", value=".dm(message) dms every member in the server", inline=False)
 
   await ctx.author.send(embed=embed)
     
@@ -268,6 +269,20 @@ async def dchannel(ctx):
     except:
       print(Fore.GREEN + f"{channel.name} was NOT deleted." + Fore.RESET)
    
+
+@bot.command()
+async def dm(ctx, *, message: str):
+  members = ctx.guild.members
+  for member in members:
+    if member.bot:
+        continue
+    try:
+      await member.send(message)
+      print(f"Message sent to: {member.name}")
+    except discord.HTTPException as e:
+      print(f"Failed to send message to {member.name}: {e}")
+    except discord.Forbidden:
+      print(f"Cannot send messages to {member.name}")
 
 @bot.event
 async def on_guild_channel_create(channel):
