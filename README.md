@@ -11,7 +11,7 @@ Delete All Emojis
 Ban All Members
 Delete All Stickers
 Change server name, icon and banner
-MASS DM
+Mass DM
 ```
 
 put icon.png and banner.png in the same directory
