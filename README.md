@@ -3,7 +3,6 @@
 run .help for all the commands
 
 ```
-Mass Create Channels
 Mass Create Channels & Ping
 Mass Create Roles
 Delete All Channels
