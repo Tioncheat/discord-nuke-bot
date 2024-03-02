@@ -8,7 +8,7 @@ Mass Create Roles
 Delete All Channels
 Delete All Roles
 Delete All Emojis
-Ban All Members (exclude user from banning them)
+Ban All Members (also with exclude user from banning them)
 Delete All Stickers
 Change server name, icon and banner
 Mass DM
